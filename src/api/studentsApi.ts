@@ -16,6 +16,29 @@ export const getStudentsApi = async (): Promise<StudentInterface[]> => {
   }
 };
 
+export const addStudentApi = async (studentData: Omit<StudentInterface, 'id'>): Promise<StudentInterface> => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API}students`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(studentData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ошибка HTTP: ${response.status}${response.statusText}`);
+    }
+    
+    const newStudent = await response.json() as StudentInterface;
+    return newStudent;
+  }
+  catch (err) {
+    console.log('>>> addStudentApi', err);
+    throw err;  // Перебрасываем ошибку для обработки в useMutation
+  }
+};
+
 export const deleteStudentApi = async (studentId: number): Promise<number> => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API}students/${studentId}`, {

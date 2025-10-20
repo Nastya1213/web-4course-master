@@ -4,14 +4,21 @@ import useStudents from '@/hooks/useStudents';
 import type StudentInterface from '@/types/StudentInterface';
 import styles from './Students.module.scss';
 import Student from './Student/Student';
+import AddStudent from './AddStudent';
+
 
 const Students = (): React.ReactElement => {
-  const { students, deleteStudentMutate } = useStudents();
+  const { students, deleteStudentMutate, addStudentMutate } = useStudents();
 
   const onDeleteHandler = (studentId: number): void => {
     if (confirm('Удалить студента?')) {
       deleteStudentMutate(studentId);
     }
+  };
+
+  // Новый обработчик по аналогии (для формы)
+  const onAddHandler = (studentData: Omit<StudentInterface, 'id'>): void => {
+    addStudentMutate(studentData);
   };
 
   return (
@@ -23,6 +30,7 @@ const Students = (): React.ReactElement => {
           onDelete={onDeleteHandler}
         />
       ))}
+      <AddStudent onAdd={onAddHandler} />
     </div>
   );
 };

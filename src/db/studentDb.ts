@@ -53,6 +53,35 @@ export const deleteStudentDb = async (studentId: number): Promise<number> => {
 };
 
 /**
+ * Добавление одного студента
+ * @param student Объект студента без id (с uuid, сгенерированным на клиенте)
+ * @returns Promise<StudentInterface> - Новый студент с id
+ */
+export const addStudentDb = async (student: Omit<StudentInterface, 'id'>): Promise<StudentInterface> => {
+  const db = new sqlite3.Database(process.env.DB ?? './db/vki-web.db');
+
+  const newStudent = await new Promise<StudentInterface>((resolve, reject) => {
+    const sql = 'INSERT INTO student (firstName, lastName, middleName, groupId, uuid) VALUES (?, ?, ?, ?, ?)';
+    db.run(sql, [student.firstName, student.lastName, student.middleName, student.groupId, student.uuid], function (err) {
+      if (err) {
+        reject(err);
+        db.close();
+        return;
+      }
+      const insertedStudent: StudentInterface = {
+        id: this.lastID,  // Автогенерированный id из БД
+        ...student,
+      };
+      console.log(insertedStudent);  // Лог
+      resolve(insertedStudent);
+      db.close();
+    });
+  });
+
+  return newStudent;
+};
+
+/**
  * Добавление  рандомных студента
  * @param mount количество добавляемых записей - 10 по умолчанию
  * @returns 

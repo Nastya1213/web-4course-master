@@ -3,13 +3,16 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { deleteStudentApi, getStudentsApi } from '@/api/studentsApi';
+import { deleteStudentApi, getStudentsApi, addStudentApi } from '@/api/studentsApi';
 import type StudentInterface from '@/types/StudentInterface';
+import { v4 as uuidv4 } from 'uuid';  // Для генерации UUID
 import isServer from '@/utils/isServer';
 
 interface StudentsHookInterface {
   students: StudentInterface[];
   deleteStudentMutate: (studentId: number) => void;
+  addStudentMutate: (studentData: Omit<StudentInterface, 'id'>) => void;  // Новая функция
+
 }
 
 const useStudents = (): StudentsHookInterface => {
@@ -20,6 +23,47 @@ const useStudents = (): StudentsHookInterface => {
     queryFn: () => getStudentsApi(),
     enabled: false,
   });
+
+  /**
+   * Мутация добавления студента 
+   */
+  const addStudentMutate = useMutation({
+    mutationFn: async (studentData: Omit<StudentInterface, 'id'>) => {
+      const studentWithUuid = {
+        ...studentData,
+        uuid: uuidv4(),  // Генерируем UUID
+      };
+      return addStudentApi(studentWithUuid);  // Вызов API
+    },
+    onMutate: async (studentData) => {
+      await queryClient.cancelQueries({ queryKey: ['students'] });
+      const previousStudents = queryClient.getQueryData<StudentInterface[]>(['students']);
+      
+      // Оптимистическое добавление temp-студента
+      const tempStudent: StudentInterface = {
+        id: -1,  // Плейсхолдер
+        ...studentData,
+        uuid: uuidv4(),  // Генерируем UUID для temp
+        isDeleted: false,
+      };
+      
+      queryClient.setQueryData<StudentInterface[]>(['students'], (old) => [
+        ...(old ?? []),
+        tempStudent,
+      ]);
+      
+      return { previousStudents };
+    },
+    onError: (err, variables, context) => {
+      console.log('>>> addStudentMutate error', err);
+      queryClient.setQueryData<StudentInterface[]>(['students'], context?.previousStudents);
+    },
+    onSuccess: (newStudent) => {
+      // После успеха: инвалидируем для синхронизации с сервером
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+    },
+  });
+
 
   /**
    * Мутация удаления студента
@@ -72,6 +116,7 @@ const useStudents = (): StudentsHookInterface => {
   return {
     students: data ?? [],
     deleteStudentMutate: deleteStudentMutate.mutate,
+    addStudentMutate: addStudentMutate.mutate,
   };
 };
 
