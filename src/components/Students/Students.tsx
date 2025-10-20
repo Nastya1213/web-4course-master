@@ -6,7 +6,6 @@ import styles from './Students.module.scss';
 import Student from './Student/Student';
 import AddStudent from './AddStudent';
 
-
 const Students = (): React.ReactElement => {
   const { students, deleteStudentMutate, addStudentMutate } = useStudents();
 
@@ -16,9 +15,8 @@ const Students = (): React.ReactElement => {
     }
   };
 
-  // Новый обработчик по аналогии (для формы)
   const onAddHandler = (studentData: Omit<StudentInterface, 'id'>): void => {
-    addStudentMutate(studentData);
+    addStudentMutate(studentData); // Теперь contacts есть в studentData
   };
 
   return (

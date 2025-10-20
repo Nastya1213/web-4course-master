@@ -1,53 +1,65 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import type StudentInterface from '@/types/StudentInterface';
 
-type FormData = Pick<StudentInterface, 'firstName' | 'lastName' | 'middleName' | 'groupId'>;
-
-interface AddStudentProps {
-  onAdd: (data: FormData) => void;
+interface Props {
+  onAdd: (data: Omit<StudentInterface, 'id'>) => void;
 }
 
-export default function AddStudent({ onAdd }: AddStudentProps) {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+const AddStudent = ({ onAdd }: Props) => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [middleName, setMiddleName] = useState('');
+  const [groupId, setGroupId] = useState(1);
+  const [contacts, setContacts] = useState(''); // Новое поле для contacts
 
-  const onSubmit = (data: FormData) => {
-    onAdd(data);  // Вызываем мутацию из хука
-    reset();  // Очищаем форму
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onAdd({ firstName, lastName, middleName, groupId, contacts }); // Добавляем contacts
+    setFirstName('');
+    setLastName('');
+    setMiddleName('');
+    setGroupId(1);
+    setContacts(''); // Очищаем contacts
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Добавить студента</h2>
-      <div>
-        <label>Имя:</label>
-        <input {...register('firstName', { required: 'Имя обязательно' })} />
-        {errors.firstName && <span style={{ color: 'red' }}>{errors.firstName.message}</span>}
-      </div>
-      <div>
-        <label>Фамилия:</label>
-        <input {...register('lastName', { required: 'Фамилия обязательна' })} />
-        {errors.lastName && <span style={{ color: 'red' }}>{errors.lastName.message}</span>}
-      </div>
-      <div>
-        <label>Отчество:</label>
-        <input {...register('middleName', { required: 'Отчество обязательно' })} />
-        {errors.middleName && <span style={{ color: 'red' }}>{errors.middleName.message}</span>}
-      </div>
-      <div>
-        <label>ID Группы:</label>
-        <input 
-          type="number" 
-          {...register('groupId', { 
-            required: 'Группа обязательна', 
-            valueAsNumber: true,
-            min: { value: 1, message: 'ID группы должен быть больше 0' }
-          })} 
-        />
-        {errors.groupId && <span style={{ color: 'red' }}>{errors.groupId.message}</span>}
-      </div>
-      <button type="submit">Добавить студента</button>
+    <form onSubmit={handleSubmit}>
+      <input
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
+        placeholder="Имя"
+        required
+      />
+      <input
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
+        placeholder="Фамилия"
+        required
+      />
+      <input
+        value={middleName}
+        onChange={(e) => setMiddleName(e.target.value)}
+        placeholder="Отчество"
+        required
+      />
+      <input
+        type="number"
+        value={groupId}
+        onChange={(e) => setGroupId(Number(e.target.value))}
+        placeholder="ID группы"
+        required
+      />
+      <input
+        value={contacts}
+        onChange={(e) => setContacts(e.target.value)}
+        placeholder="Контакты (email)"
+        required
+      />
+      <button type="submit">Добавить</button>
     </form>
   );
-}
+};
+
+export default AddStudent;

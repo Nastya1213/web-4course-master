@@ -10,8 +10,9 @@ interface StudentInterface {
   firstName: string;
   lastName: string;
   middleName: string;
-  groupId: number;  // Добавлено: соответствует полю в БД
-  uuid?: string;     // помогает "мгновенно" показывать нового студента в списке на клиенте, не дожидаясь ответа сервера.
+  groupId: number;
+  contacts: string; 
+  uuid?: string; 
   isDeleted?: boolean;
 };
 

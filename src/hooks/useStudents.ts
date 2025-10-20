@@ -24,6 +24,11 @@ const useStudents = (): StudentsHookInterface => {
     enabled: false,
   });
 
+// Query (запрос): "Покажи мне список студентов" — это GET-запрос, который читает данные.
+// Mutation (мутация): "Добавь нового студента"
+//  или "Удали студента" — это POST/DELETE-запросы, которые меняют данные на сервере.
+
+
   /**
    * Мутация добавления студента 
    */
@@ -59,8 +64,10 @@ const useStudents = (): StudentsHookInterface => {
       queryClient.setQueryData<StudentInterface[]>(['students'], context?.previousStudents);
     },
     onSuccess: (newStudent) => {
+      console.log("dbhcbhdsbcub");
       // После успеха: инвалидируем для синхронизации с сервером
-      queryClient.invalidateQueries({ queryKey: ['students'] });
+      // queryClient.invalidateQueries({ queryKey: ['students'] });
+      refetch();
     },
   });
 
