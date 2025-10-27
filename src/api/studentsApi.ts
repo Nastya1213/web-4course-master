@@ -40,6 +40,9 @@ export const addStudentApi = async (studentData: Omit<StudentInterface, 'id'>): 
 };
 
 export const deleteStudentApi = async (studentId: number): Promise<number> => {
+  // отладка - 6
+  console.log('>>> deleteStudentApi', studentId);
+  debugger;
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API}students/${studentId}`, {
       method: 'DELETE',
@@ -48,9 +51,12 @@ export const deleteStudentApi = async (studentId: number): Promise<number> => {
     if (!response.ok) {
       throw new Error(`Ошибка HTTP: ${response.status}${response.statusText}`);
     }
+    console.log('>>> deleteStudentApi', studentId);
+    debugger;
     return studentId;
   }
   catch (err) {
+    //отладка - 7
     console.log('>>> deleteStudentApi', err);
     return -1;
   }

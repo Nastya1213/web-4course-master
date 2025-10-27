@@ -11,11 +11,17 @@ const Students = (): React.ReactElement => {
 
   const onDeleteHandler = (studentId: number): void => {
     if (confirm('Удалить студента?')) {
+      // отладка - 1
+      debugger;
+      console.log('onDeleteHandler', studentId);
       deleteStudentMutate(studentId);
     }
   };
 
   const onAddHandler = (studentData: Omit<StudentInterface, 'id'>): void => {
+    // отладка - 2
+      debugger;
+      console.log('onAddHandler', studentData);
     addStudentMutate(studentData); // Теперь contacts есть в studentData
   };
 
