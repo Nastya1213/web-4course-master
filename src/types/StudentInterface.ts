@@ -4,13 +4,14 @@
 
 // Любой объект, который претендует быть StudentInterface,
 // должен иметь эти свойства (поля) с этими типами.
-
+import GroupInterface from './GroupInterface';
 interface StudentInterface {
   id: number;
   firstName: string;
   lastName: string;
   middleName: string;
   groupId: number;
+  group?: GroupInterface; // новое поле для связи с объектом группы
   contacts: string; 
   uuid?: string; 
   isDeleted?: boolean;

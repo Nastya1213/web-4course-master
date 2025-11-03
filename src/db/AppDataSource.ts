@@ -2,12 +2,15 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { Group } from './entity/Group.entity';
 import { Student } from './entity/Student.entity';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
 
 const AppDataSource = new DataSource({
   type: 'sqlite',
   database: process.env.DB ?? './db/vki-web.db', // Path to your SQLite database file
   entities: [Group, Student],
-  synchronize: true, // Auto-create schema on startup (use with caution in production)
+  synchronize: false, // отключаем, чтобы не конфликтовать с миграциями
   logging: false,
 });
 

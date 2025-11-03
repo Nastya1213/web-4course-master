@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Group } from './Group.entity';
 
 @Entity()
 export class Student {
@@ -19,6 +20,11 @@ export class Student {
 
   @Column()
   groupId!: number;
+
+  // связь между студентом и группой
+  @ManyToOne(() => Group, (group) => group.students, { eager: true, nullable: true })
+  @JoinColumn({ name: 'groupId' })
+  group!: Group | null;
 
   @Column({ nullable: true }) // Для обратной совместимости
   uuid?: string;

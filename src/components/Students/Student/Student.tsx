@@ -11,10 +11,15 @@ const Student = ({ student, onDelete }: Props): React.ReactElement => {
     onDelete(student.id);
   };
 
+  const onOpenHandler = (): void => {
+    window.location.href = `/students/${student.id}`;
+  };
+
   return (
     <div className={`${styles.Student} ${student.isDeleted ? styles['--isDeleted'] : '' } `}>
       {`${student.id} - ${student.lastName} ${student.firstName} ${student.middleName}`}
       <button onClick={onDeleteHandler}>Удалить</button>
+      <button onClick={onOpenHandler}>Открыть</button>
     </div>
   );
 };
