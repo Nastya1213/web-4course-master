@@ -11,7 +11,7 @@ interface StudentInterface {
   lastName: string;
   middleName: string;
   groupId: number;
-  group?: GroupInterface; // новое поле для связи с объектом группы
+  group?: GroupInterface | null; // новое поле для связи с объектом группы
   contacts: string; 
   uuid?: string; 
   isDeleted?: boolean;

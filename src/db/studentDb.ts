@@ -10,14 +10,15 @@ const studentRepository = AppDataSource.getRepository(Student);
  * Получение студентов
  */
 export const getStudentsDb = async (): Promise<StudentInterface[]> => {
-  return await studentRepository.find();
+  return await studentRepository.find({
+    relations: ['group'], // ✅ загружаем связанную группу
+  });
 };
-
 /**
  * Удаление студента (soft-delete)
  */
 export const deleteStudentDb = async (studentId: number): Promise<number> => {
-  await studentRepository.update(studentId, { isDeleted: true }); // Soft-delete
+  await studentRepository.delete(studentId); // ✅ реально удаляем
   return studentId;
 };
 
